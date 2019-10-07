@@ -4,21 +4,16 @@ resource "digitalocean_droplet" "web1" {
   region             = "nyc3"
   size               = "512mb"
   private_networking = true
+  user_data          = "${file("config/webuserdata.sh")}"
   ssh_keys = [
     "${var.ssh_fingerprint}"
   ]
   connection {
-    user = "root"
-    # host        = self.public_ip
+    user        = "root"
+    host        = self.ipv4_address
     type        = "ssh"
     private_key = "${file(var.pvt_key)}"
     timeout     = "2m"
   }
-  provisioner "remote-exec" {
-    inline = [
-      "export PATH=$PATH:/usr/bin",
-      "sudo apt-get update",
-      "sudo apt-get -y install nginx"
-    ]
-  }
+
 }
